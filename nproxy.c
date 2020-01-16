@@ -411,9 +411,10 @@ int resolve(const char *hostname, struct in_addr *addr)
   long laddr;
 
   laddr=inet_addr(hostname);
-  if (laddr != -1 || !strcmp(hostname,"255.255.255.255"))
+  if (laddr != 0xffffffff || !strcmp(hostname,"255.255.255.255"))
   {
     addr->s_addr=laddr;
+    if(verbose) fprintf(stderr, "host name is IP address %s\n", inet_ntoa(*addr));
     return 1;
   }
 
@@ -422,6 +423,7 @@ int resolve(const char *hostname, struct in_addr *addr)
   if( hostptr == 0 )
   {
 //		TRACE2( "Failed to resolve address '%s', error=%d\n", hostname, hp_error );
+    fprintf(stderr, "Failed to resolve address '%s', error = %d\n", hostname, hp_error);
     return 0;
   }
 /*    throw error( "failed to resolve address '%s', error=%d",
